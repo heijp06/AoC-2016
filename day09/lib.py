@@ -1,6 +1,16 @@
+from typing import Any
 import re
 
+
 def part1(rows: list[str]) -> int:
+    return go(rows, len)
+
+
+def part2(rows: list[str]) -> int:
+    return go(rows, part2)
+
+
+def go(rows: list[str], func: Any) -> int:
     file = "".join(rows)
     pos = 0
     length = 0
@@ -12,10 +22,7 @@ def part1(rows: list[str]) -> int:
             break
         number = int(match[1])
         repeat = int(match[2])
-        length += match.start() - pos + number * repeat
+        length += match.start() - pos
+        length += func(file[match.end():match.end()+number]) * repeat
         pos = match.end() + number
     return length
-
-
-def part2(rows: list[str]) -> int:
-    pass
