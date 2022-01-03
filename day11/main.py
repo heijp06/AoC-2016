@@ -18,7 +18,7 @@ def clip(x):
 
 
 rows = read_rows()
-x = part1(data)
+x = part1(rows)
 print(f"Part 1: {x}")
 clip(x)
 

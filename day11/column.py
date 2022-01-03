@@ -33,6 +33,7 @@ class Column:
     def __init__(self, floors: Iterable[Floor]) -> None:
         self.elevator = 0
         self.floors = tuple(floors)
+        self.parent = None
 
     def _key(self) -> tuple[int, tuple(Floor, ...)]:
         return self.elevator, self.floors
@@ -77,19 +78,19 @@ class Column:
     def move(self) -> Iterable[Column]:
         choices = [(1, 0), (0, 1), (1, 1), (2, 0), (0, 2)]
         for number_of_microchips, number_of_generators in choices:
-            if number_of_microchips > len(self.here.microchips) and number_of_generators > len(self.here.generators):
-                continue
             if self.up:
                 for microchips in combinations(self.here.microchips, number_of_microchips):
                     for generators in combinations(self.here.generators, number_of_generators):
                         up = self.microchips_and_generators_up(microchips, generators)
                         if up.valid:
+                            up.parent = self
                             yield up
             if self.down:
                 for microchips in combinations(self.here.microchips, number_of_microchips):
                     for generators in combinations(self.here.generators, number_of_generators):
                         down = self.microchips_and_generators_down(microchips, generators)
                         if down.valid:
+                            down.parent = self
                             yield down
 
     def microchips_and_generators_up(self, microchips: Iterable[str], generators: Iterable[str]) -> Column:
@@ -117,9 +118,9 @@ class Column:
     def microchip_up(self, microchip: str) -> Column:
         assert self.up
         here = self.here.remove_microchip(microchip)
-        up1 = self.up.add_microchip(microchip)
+        up = self.up.add_microchip(microchip)
         column = Column((*self[:self.elevator], here,
-                        up1, *self[self.elevator+2:]))
+                        up, *self[self.elevator+2:]))
         column.elevator = self.elevator + 1
         return column
 
