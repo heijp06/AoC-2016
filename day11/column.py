@@ -55,7 +55,7 @@ class Column:
     @property
     def up(self) -> Floor | None:
         level = self.elevator
-        return None if level == len(self.floors) else self.floors[level + 1]
+        return None if level == len(self.floors) - 1 else self.floors[level + 1]
 
     @property
     def down(self) -> Floor | None:
@@ -69,6 +69,10 @@ class Column:
     @property
     def valid(self) -> bool:
         return all(floor.valid for floor in self.floors)
+
+    @property
+    def final(self) -> bool:
+        return all(not floor.microchips and not floor.generators for floor in self.floors[:-1])
 
     def move(self) -> Iterable[Column]:
         choices = [(1, 0), (0, 1), (1, 1), (2, 0), (0, 2)]
@@ -157,6 +161,3 @@ class Column:
         column = copy(self)
         column.elevator = self.elevator - 1
         return column
-
-    def final(self) -> bool:
-        return all(not floor.microchips and not floor.generators for floor in self.floors[:-1])
