@@ -20,7 +20,7 @@ def parse(rows: list[str]) -> Column:
 def parse_floor(data: str) -> Floor:
     microchips = []
     generators = []
-    for item in re.split(r", |,? and ", data):
+    for item in re.split(r",? and |, ", data):
         match re.split(r"[ -]", item):
             case ["a", element, "compatible", "microchip"]:
                 microchips.append(element)

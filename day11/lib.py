@@ -9,6 +9,7 @@ def part1(rows: list[str]) -> int:
     seen = {column}
     steps = 0
     while columns:
+        print(len(columns))
         steps += 1
         new_columns = set()
         for column in columns:
