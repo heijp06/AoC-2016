@@ -1,8 +1,28 @@
 from column import Column, parse
-from floor import ATOMS
+from floor import Floor, ATOMS
 
 def part1(rows: list[str]) -> int:
     column = parse(rows)
+    return go(column)
+
+def part2(rows: list[str]) -> int:
+    parsed_column = parse(rows)
+    ELERIUM = "elerium"
+    DILITHIUM = "dilithium"
+    microchips = list(parsed_column[0].microchips)
+    microchips += [ELERIUM, DILITHIUM]
+    generators = list(parsed_column[0].generators)
+    generators += [ELERIUM, DILITHIUM]
+    column = Column([
+        Floor(microchips, generators),
+        parsed_column[1],
+        parsed_column[2],
+        parsed_column[3],
+    ])
+    return go(column)
+    
+
+def go(column: Column) -> int:
     if column.final:
         return 0
     columns = {column}
@@ -23,9 +43,6 @@ def part1(rows: list[str]) -> int:
                 new_columns.add(new_column)
         columns = new_columns
     return -1
-
-def part2(rows: list[str]) -> int:
-    pass
 
 def dump_history(column: Column) -> None:
     history = []

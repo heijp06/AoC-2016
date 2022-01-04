@@ -8,7 +8,9 @@ ATOMS = {
     "curium": "Cm",
     "plutonium": "Pu",
     "promethium": "Pm",
-    "ruthenium": "Ru"
+    "ruthenium": "Ru",
+    "elerium": "El",
+    "dilithium": "Di"
 }
 
 
