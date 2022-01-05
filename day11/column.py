@@ -81,14 +81,16 @@ class Column:
             if self.up:
                 for microchips in combinations(self.here.microchips, number_of_microchips):
                     for generators in combinations(self.here.generators, number_of_generators):
-                        up = self.microchips_and_generators_up(microchips, generators)
+                        up = self.microchips_and_generators_up(
+                            microchips, generators)
                         if up.valid:
                             up.parent = self
                             yield up
             if self.down:
                 for microchips in combinations(self.here.microchips, number_of_microchips):
                     for generators in combinations(self.here.generators, number_of_generators):
-                        down = self.microchips_and_generators_down(microchips, generators)
+                        down = self.microchips_and_generators_down(
+                            microchips, generators)
                         if down.valid:
                             down.parent = self
                             yield down
@@ -162,3 +164,30 @@ class Column:
         column = copy(self)
         column.elevator = self.elevator - 1
         return column
+
+    def min_steps_left(self) -> int:
+        elevator = self.elevator
+        cost = 0
+        items = [
+            len(floor.microchips) + len(floor.generators)
+            for floor in self.floors
+        ]
+        if elevator < 3:
+            items[elevator] -= 1
+            other = None
+            for i in range(3):
+                if items[i]:
+                    other = i
+                    break
+            if other is None:
+                cost += 3 - elevator
+            else:
+                items[other] -= 1
+                if other < elevator:
+                    cost += elevator - other
+                    cost += 3 - other
+                else:
+                    cost += 3 - elevator
+        for i in range(3):
+            cost += 2 * (3 - i) * items[i]
+        return cost

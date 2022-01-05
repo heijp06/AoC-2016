@@ -1,6 +1,7 @@
 from data_for_testing import data
 from column import Column, parse
 from floor import Floor
+import pytest
 
 
 def test_parse():
@@ -69,3 +70,32 @@ def test_microchip_up():
     assert len(new_column) == 4
     assert new_column[0].microchips == frozenset(["lithium"])
     assert new_column[1].microchips == frozenset(["hydrogen"])
+
+@pytest.mark.parametrize("column,steps", [
+    (Column([
+        Floor(["hydrogen"], ["hydrogen", "lithium"]),
+        Floor(["lithium"], []),
+        Floor([], []),
+        Floor([], []),
+    ]), 13),
+    (Column([
+        Floor(["hydrogen"], ["hydrogen", "lithium"]),
+        Floor(["lithium"], []),
+        Floor([], []),
+        Floor([], []),
+    ]).elevator_up(), 16),
+    (Column([
+        Floor(["hydrogen"], ["hydrogen"]),
+        Floor(["lithium"], []),
+        Floor([], ["lithium"]),
+        Floor([], []),
+    ]).elevator_up(), 12),
+    (Column([
+        Floor(["hydrogen"], ["hydrogen"]),
+        Floor(["lithium"], []),
+        Floor([], ["lithium"]),
+        Floor([], []),
+    ]).elevator_up().elevator_up(), 15),
+])
+def test_min_steps_left(column: Column, steps: int) -> None:
+    assert column.min_steps_left() == steps

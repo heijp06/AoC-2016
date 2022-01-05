@@ -21,7 +21,7 @@ def clip(x):
 t0 = datetime.now()
 
 rows = read_rows()
-x = part1(rows)
+x = part1(rows) # 0:00:56.667214
 print(f"Part 1: {x}")
 clip(x)
 
