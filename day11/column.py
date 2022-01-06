@@ -1,6 +1,6 @@
 from __future__ import annotations
 from collections.abc import Iterable
-from itertools import combinations
+from itertools import chain, combinations, product
 from copy import copy
 import re
 from functools import total_ordering
@@ -83,24 +83,60 @@ class Column:
         return all(not floor.microchips and not floor.generators for floor in self.floors[:-1])
 
     def move(self) -> Iterable[Column]:
-        choices = [(1, 0), (0, 1), (1, 1), (2, 0), (0, 2)]
-        for number_of_microchips, number_of_generators in choices:
+        return chain(
+            self.move_microchips(1),
+            self.move_microchips(2),
+            self.move_generators(1),
+            self.move_generators(2),
+            self.move_both()
+        )
+    
+    def move_both(self) -> Iterable[Column]:
+        for microchip in self.here.microchips:
+            if microchip not in self.here.generators:
+                continue
             if self.up:
-                for microchips in combinations(self.here.microchips, number_of_microchips):
-                    for generators in combinations(self.here.generators, number_of_generators):
-                        up = self.microchips_and_generators_up(
-                            microchips, generators)
-                        if up.valid:
-                            up.parent = self
-                            yield up
+                up = self.microchips_and_generators_up([microchip], [microchip])
+                if up.valid:
+                    up.parent = self
+                    yield up
             if self.down:
-                for microchips in combinations(self.here.microchips, number_of_microchips):
-                    for generators in combinations(self.here.generators, number_of_generators):
-                        down = self.microchips_and_generators_down(
-                            microchips, generators)
-                        if down.valid:
-                            down.parent = self
-                            yield down
+                down = self.microchips_and_generators_down([microchip], [microchip])
+                if down.valid:
+                    down.parent = self
+                    yield down
+
+    def move_microchips(self, number: int) -> Iterable[Column]:
+        if self.up:
+            for microchips in combinations(self.here.microchips, number):
+                up = self.microchips_and_generators_up(
+                    microchips, [])
+                if up.valid:
+                    up.parent = self
+                    yield up
+        if self.down:
+            for microchips in combinations(self.here.microchips, number):
+                down = self.microchips_and_generators_down(
+                    microchips, [])
+                if down.valid:
+                    down.parent = self
+                    yield down
+    
+    def move_generators(self, number: int) -> Iterable[Column]:
+        if self.up:
+            for generators in combinations(self.here.generators, number):
+                up = self.microchips_and_generators_up(
+                    [], generators)
+                if up.valid:
+                    up.parent = self
+                    yield up
+        if self.down:
+            for generators in combinations(self.here.generators, number):
+                down = self.microchips_and_generators_down(
+                    [], generators)
+                if down.valid:
+                    down.parent = self
+                    yield down
 
     def microchips_and_generators_up(self, microchips: Iterable[str], generators: Iterable[str]) -> Column:
         assert self.up

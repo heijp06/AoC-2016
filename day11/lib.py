@@ -52,7 +52,7 @@ def go(column: Column) -> int:
                 continue
             steps_by_column[new_column] = steps
             columns.put((steps + new_column.min_steps_left(), new_column))
-    dump_history(new_column)
+    dump_history(shortest)
     return min_steps
 
 
