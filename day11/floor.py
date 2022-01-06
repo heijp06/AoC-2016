@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Iterable
+from functools import total_ordering
 
 ATOMS = {
     "hydrogen": "H",
@@ -14,6 +15,7 @@ ATOMS = {
 }
 
 
+@total_ordering
 class Floor:
     def __init__(self, microchips: Iterable[str], generators: Iterable[str]) -> None:
         self.microchips = frozenset(microchips)
@@ -24,6 +26,11 @@ class Floor:
     
     def __hash__(self) -> int:
         return hash(self._key())
+
+    def __lt__(self, other: Floor) -> bool | NotImplemented:
+        if not isinstance(other, Floor):
+            return NotImplemented
+        return self.microchips < other.microchips or self.generators < other.generators
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Floor) and self._key() == other._key()

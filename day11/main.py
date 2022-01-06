@@ -21,14 +21,14 @@ def clip(x):
 t0 = datetime.now()
 
 rows = read_rows()
-x = part1(rows) # 0:00:56.667214
+x = part1(rows) # 0:00:56.667214 # A*: 0:00:02.524549
 print(f"Part 1: {x}")
 clip(x)
-
-t1 = datetime.now()
-
-print(t1 - t0)
 
 # x = part2(rows)
 # print(f"Part 2: {x}")
 # clip(x)
+
+t1 = datetime.now()
+
+print(t1 - t0)

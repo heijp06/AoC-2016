@@ -1,9 +1,12 @@
+from queue import PriorityQueue
 from column import Column, parse
 from floor import Floor, ATOMS
+
 
 def part1(rows: list[str]) -> int:
     column = parse(rows)
     return go(column)
+
 
 def part2(rows: list[str]) -> int:
     parsed_column = parse(rows)
@@ -20,29 +23,38 @@ def part2(rows: list[str]) -> int:
         parsed_column[3],
     ])
     return go(column)
-    
+
 
 def go(column: Column) -> int:
     if column.final:
         return 0
-    columns = {column}
-    seen = {column}
-    steps = 0
-    while columns:
-        print(len(columns))
-        steps += 1
-        new_columns = set()
-        for column in columns:
-            for new_column in column.move():
-                if new_column in seen:
-                    continue
-                if new_column.final:
-                    dump_history(new_column)
-                    return steps
-                seen.add(new_column)
-                new_columns.add(new_column)
-        columns = new_columns
-    return -1
+    columns = PriorityQueue()
+    min_steps = None
+    columns.put((column.min_steps_left(), column))
+    steps_by_column = {column: 0}
+    progress = 0
+    shortest = None
+    while columns.qsize():
+        min_total_steps_left, column = columns.get()
+        if progress != min_total_steps_left:
+            progress = min_total_steps_left
+            print(progress)
+        if min_steps and min_steps <= min_total_steps_left:
+            break
+        steps = steps_by_column[column] + 1
+        if min_steps and steps >= min_steps:
+            continue
+        for new_column in column.move():
+            if new_column.final and (not min_steps or steps < min_steps):
+                shortest = new_column
+                min_steps = steps
+            if new_column in steps_by_column and steps >= steps_by_column[new_column]:
+                continue
+            steps_by_column[new_column] = steps
+            columns.put((steps + new_column.min_steps_left(), new_column))
+    dump_history(new_column)
+    return min_steps
+
 
 def dump_history(column: Column) -> None:
     history = []
@@ -52,6 +64,7 @@ def dump_history(column: Column) -> None:
     for i, column in enumerate(history):
         print("Step", i)
         dump(column)
+
 
 def dump(column: Column) -> None:
     elements = frozenset()
@@ -68,6 +81,7 @@ def dump(column: Column) -> None:
             dump_item(element in floor.microchips, f"{symbol}M")
         print()
     print()
+
 
 def dump_item(condition: bool, symbol: str) -> None:
     if condition:

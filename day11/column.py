@@ -3,6 +3,7 @@ from collections.abc import Iterable
 from itertools import combinations
 from copy import copy
 import re
+from functools import total_ordering
 
 from floor import Floor
 
@@ -29,6 +30,7 @@ def parse_floor(data: str) -> Floor:
     return Floor(microchips, generators)
 
 
+@total_ordering
 class Column:
     def __init__(self, floors: Iterable[Floor]) -> None:
         self.elevator = 0
@@ -43,6 +45,11 @@ class Column:
 
     def __hash__(self) -> int:
         return hash(self._key())
+
+    def __lt__(self, other: Column) -> bool | NotImplemented:
+        if not isinstance(other, Column):
+            return NotImplemented
+        return self.elevator < other.elevator or self.floors < other.floors
 
     def __repr__(self) -> str:
         return f"Elevator: {self.elevator}, Floors: {self.floors}"
