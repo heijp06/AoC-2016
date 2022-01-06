@@ -4,13 +4,17 @@ from floor import Floor
 import pytest
 
 
+HYDROGEN = "hydrogen"
+LITHIUM = "lithium"
+
+
 def test_parse():
     actual = parse(data)
 
     expected = Column([
-        Floor(["hydrogen", "lithium"], []),
-        Floor([], ["hydrogen"]),
-        Floor([], ["lithium"]),
+        Floor([HYDROGEN, LITHIUM], []),
+        Floor([], [HYDROGEN]),
+        Floor([], [LITHIUM]),
         Floor([], [])
     ])
 
@@ -24,18 +28,16 @@ def test_move():
     assert len(columns) == 1
 
     expected = Column([
-        Floor(["lithium"], []),
-        Floor(["hydrogen"], ["hydrogen"]),
-        Floor([], ["lithium"]),
+        Floor([LITHIUM], []),
+        Floor([HYDROGEN], [HYDROGEN]),
+        Floor([], [LITHIUM]),
         Floor([], [])
     ]).elevator_up()
 
     assert columns[0] == expected
 
-def test_move2():
-    HYDROGEN = "hydrogen"
-    LITHIUM = "lithium"
 
+def test_move2():
     column = Column([
         Floor([], []),
         Floor([HYDROGEN, LITHIUM], [HYDROGEN, LITHIUM]),
@@ -62,38 +64,38 @@ def test_move2():
     assert actual == expected
 
 
-
 def test_microchip_up():
     column = parse(data)
-    new_column = column.microchip_up("hydrogen")
+    new_column = column.microchip_up(HYDROGEN)
 
     assert len(new_column) == 4
-    assert new_column[0].microchips == frozenset(["lithium"])
-    assert new_column[1].microchips == frozenset(["hydrogen"])
+    assert new_column[0].microchips == frozenset([LITHIUM])
+    assert new_column[1].microchips == frozenset([HYDROGEN])
+
 
 @pytest.mark.parametrize("column,steps", [
     (Column([
-        Floor(["hydrogen"], ["hydrogen", "lithium"]),
-        Floor(["lithium"], []),
+        Floor([HYDROGEN], [HYDROGEN, LITHIUM]),
+        Floor([LITHIUM], []),
         Floor([], []),
         Floor([], []),
     ]), 13),
     (Column([
-        Floor(["hydrogen"], ["hydrogen", "lithium"]),
-        Floor(["lithium"], []),
+        Floor([HYDROGEN], [HYDROGEN, LITHIUM]),
+        Floor([LITHIUM], []),
         Floor([], []),
         Floor([], []),
     ]).elevator_up(), 16),
     (Column([
-        Floor(["hydrogen"], ["hydrogen"]),
-        Floor(["lithium"], []),
-        Floor([], ["lithium"]),
+        Floor([HYDROGEN], [HYDROGEN]),
+        Floor([LITHIUM], []),
+        Floor([], [LITHIUM]),
         Floor([], []),
     ]).elevator_up(), 12),
     (Column([
-        Floor(["hydrogen"], ["hydrogen"]),
-        Floor(["lithium"], []),
-        Floor([], ["lithium"]),
+        Floor([HYDROGEN], [HYDROGEN]),
+        Floor([LITHIUM], []),
+        Floor([], [LITHIUM]),
         Floor([], []),
     ]).elevator_up().elevator_up(), 15),
 ])
