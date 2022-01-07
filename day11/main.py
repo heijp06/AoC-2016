@@ -1,7 +1,7 @@
 import csv
 import pyperclip    # type: ignore
 from lib import part1, part2
-from data_for_testing import data
+from data_for_testing import data, four_same, two_same
 from datetime import datetime
 
 
@@ -25,7 +25,7 @@ x = part1(rows) # 0:00:56.667214 # A*: 0:00:02.524549
 print(f"Part 1: {x}")
 clip(x)
 
-x = part2(rows)
+x = part2(rows) # 0:01:52.167372 for both after eliminating symmetrically equivalent states.
 print(f"Part 2: {x}")
 clip(x)
 

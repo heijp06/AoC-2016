@@ -37,6 +37,7 @@ def test_move():
     assert columns[0] == expected
 
 
+@pytest.mark.skip()
 def test_move2():
     column = Column([
         Floor([], []),

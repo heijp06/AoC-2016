@@ -85,13 +85,13 @@ class Column:
     def move(self) -> Iterable[Column]:
         floors_by_microchip = {
             microchip: floor
-            for floor in self.floors
-            for microchip in floor.microchips
+            for floor in range(4)
+            for microchip in self[floor].microchips
         }
         floors_by_generator = {
             generator: floor
-            for floor in self.floors
-            for generator in floor.generators
+            for floor in range(4)
+            for generator in self[floor].generators
         }
         return chain(
             self.move_microchips(1, floors_by_generator),
@@ -123,6 +123,7 @@ class Column:
             key = tuple(floors_by_generator[microchip] for microchip in microchips)
             if key in seen:
                 continue
+            seen.add(key)
             if self.up:
                 up = self.microchips_and_generators_up(
                     microchips, [])
